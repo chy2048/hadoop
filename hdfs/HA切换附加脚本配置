@@ -1,10 +1,9 @@
-HA切换时，如发生故障（切换失败，出现两个active-namenode），官方提供两种保护方法：
-其中，通过shell的方式实现如下：
+HA切换时，如发生故障（切换失败，出现两个active-namenode），处理方法如下(原理是通过脚本，再重启一次namenode)：
 1.    修改hdfs参数，dfs.ha.fencing.methods  
        默认值shell(/bin/true)
        改成shell(/home/hdfs/shell/restartNameNode.sh) 
-2.    在54.21和54.22上创建/home/hdfs/shell/restartNameNode.sh
-       内容如附件，脚本里面的 hostname 需要修改，name21的脚本里面的hosts 改成name22,  反之亦然。
+2.    在两个namenode节点上创建/home/hdfs/shell/restartNameNode.sh
+       内容如附件，脚本里面的 hostname 需要修改，节点A的脚本里面的hosts 改成节点B的hosts,  反之亦然。
        接口需加上 -u参数，ambari的账号密码， context 的内容也可做下修改，方便查看。
 3.    重启zkfc
 --------------------------
