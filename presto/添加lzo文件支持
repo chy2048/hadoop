@@ -1,0 +1,46 @@
+1.  添加preso lzo文件查询的支持 （非yarn-persto）
+#在presto jvm参数中指定lzo的navive库
+'-Djava.library.path=/usr/hdp/current/hadoop-client/lib/native/Linux-amd64-64'
+
+#修改/user/lib/presto/lib/plugin/hive-hadoop2/ 下面的hadoop-lzo的jar包文件
+需要下载源码并编译，修改com.hadoop.mapred.DeprecatedLzoTextInputFormat.java isSplitable方法
+把return部分改为   return index != null && !index.isEmpty();
+
+重启presto
+
+====================
+
+2.  添加preso lzo文件查询的支持 （yarn-persto）
+#destory老的实例，重新安装
+
+#到ambari节点
+cd /var/lib/ambari-server/resources/apps
+
+#解压
+unzip presto-yarn-package-version-zip
+
+cd package/files
+
+#继续解压
+tar - zxvf presto-server-version-tar.gz
+
+#修改 presto-server-version/plugin/hive-hadoop2/ 下面的hadoop-lzo的jar包文件
+需要下载源码并编译，修改com.hadoop.mapred.DeprecatedLzoTextInputFormat.java isSplitable方法
+把return部分改为   return index != null && !index.isEmpty();
+
+#重新压缩（老的删掉）
+tar -zcvf presto-server-version-tar.gz presto-server-version 
+#添加执行权限
+chmod +x presto-server-version-tar.gz
+
+#到最外层，重新压缩presto-yarn-package-version-zip (老的删掉)
+zip -r presto-yarn-package-version-zip presto-yarn-package-version
+
+#重启ambari
+ambari-server restart
+
+#安装yarn-presto
+安装步骤见yarn-presto安装文档
+
+
+
