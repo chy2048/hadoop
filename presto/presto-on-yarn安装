@@ -1,0 +1,27 @@
+1. 将presto-yarn-package-1.5-0.173.zip 放到ambari节点的/var/lib/ambari-server/resources/apps 目录下
+   重启 ambari-server restart
+   
+2. 右上角view控制面板选择 slider（见slider安装文档）, 然后create app
+1) name = presto
+
+2) coordinator: 
+     instance = 1 
+     memory = 2000 
+     cpu = 1
+     
+   worker: 
+     instance = 9 
+     memory = 2000 
+     cpu = 1
+     
+3) global.catalog = {'hive':['connector.name=hive-hadoop2', 'hive.metastore.uri=thrift://host:9083', 'hive.config.resources=/usr/hdp/current/hadoop-client/etc/hadoop/hdfs-site.xml, /usr/hdp/current/hadoop-client/etc/hadoop/core-site.xml', 'hive.security=read-only']}
+   global.config_dir = /home/yarn/config
+   global.data_dir = /home/yarn/data
+   global.jvm_args = ['-server', '-Xmx3G', '-XX:+UseConcMarkSweepGC', '-XX:+ExplicitGCInvokesConcurrent', '-XX:+CMSClassUnloadingEnabled', '-XX:+AggressiveOpts', '-XX:+HeapDumpOnOutOfMemoryError', '-XX:OnOutOfMemoryError=kill -9 %p', '-XX:ReservedCodeCacheSize=150M']
+   global.presto_query_max_memory = 20G
+   global.presto_query_max_memory_per_node = 2G
+   global.presto_server_port = 8285
+   global.singlenode = false
+   
+   custom:
+    query.max-run-time = 300s
