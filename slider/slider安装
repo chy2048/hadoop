@@ -1,0 +1,17 @@
+#进入ambari，  add service， 选择slider
+
+#选部署slider的节点
+
+#slider-env中 设置 JAVA_HOME， HADOOP_CONF_DIR=/usr/hdp/current/hadoop-client/etc/hadoop 
+
+#slider-client 中添加 zk.home = /data/hadoop/zookeeper,slider.zookeeper.quorum = zk1:2181,zk2:2181,zk3:2181
+
+#如果有提示， 选择process anywa ， 然后deploy
+
+#如果提示缺少range的lib包， 登录部署slider的节点cp /usr/hdp/current/hadoop-client/lib/ranger-plugins-common-0.5.0.jar  /usr/hdp/current/slider-client/lib/
+
+manager ambari -> view -> create instance 
+instance name, display name, description 都填 slider
+ambari.server.url = http://ambari节点host:8080/api/v1/clusters/集群名称
+ambari.server.username = admin
+ambari.server.password = ${admin}
