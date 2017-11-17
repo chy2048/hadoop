@@ -1,4 +1,3 @@
-一. 增加HDFS  HA切换额外脚本
 HA切换时，如发生故障（切换失败，出现两个active-namenode），官方提供两种保护方法：
 其中，通过shell的方式实现如下：
 1.    修改hdfs参数，dfs.ha.fencing.methods  
