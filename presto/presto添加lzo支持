@@ -40,7 +40,7 @@ zip -r presto-yarn-package-version-zip presto-yarn-package-version
 ambari-server restart
 
 #安装yarn-presto
-安装步骤见yarn-presto安装文档
+安装步骤见presto-on-yarn安装文档
 
 
 
