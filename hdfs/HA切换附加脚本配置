@@ -1,0 +1,43 @@
+一. 增加HDFS  HA切换额外脚本
+HA切换时，如发生故障（切换失败，出现两个active-namenode），官方提供两种保护方法：
+其中，通过shell的方式实现如下：
+1.    修改hdfs参数，dfs.ha.fencing.methods  
+       默认值shell(/bin/true)
+       改成shell(/home/hdfs/shell/restartNameNode.sh) 
+2.    在54.21和54.22上创建/home/hdfs/shell/restartNameNode.sh
+       内容如附件，脚本里面的 hostname 需要修改，name21的脚本里面的hosts 改成name22,  反之亦然。
+       接口需加上 -u参数，ambari的账号密码， context 的内容也可做下修改，方便查看。
+3.    重启zkfc
+--------------------------
+效果： 当zkfc把standByNameNode置成active之前，会调用脚本， 脚本作用是通过ambari的http接口，重启当前 active的NameNode.
+--------------------------
+验证：
+通过关闭当前active的namenode rpc端口，人为模拟namenode故障。
+/sbin/iptables -I INPUT -p tcp --dport 8020 -j DROP 
+/etc/init.d/iptables save
+service iptables restart    
+在ambari上能看到故障的active-namenode会重启，老的standby会切换成active
+
+影响：平时通过ambari 停止 activeNameNode的时候，也会调用脚本，自动重启。  停standby的时候不会有这个问题。
+
+
+#restartNameNode.sh 文件内容
+#!/bin/bash
+curl -u -H 'X-Requested-By: ambari' -X POST -d '
+{
+   "RequestInfo":{
+      "command":"RESTART",
+      "context":"Restart NameNode on cluster",
+      "operation_level":{
+         "level":"HOST",
+         "cluster_name":"集群名字"
+      }
+   },
+   "Requests/resource_filters":[
+      {
+         "service_name":"HDFS",
+         "component_name":"NAMENODE",
+         "hosts":"需要重启的namenode"
+      }
+   ]
+}' http://ambari的host:8080/api/v1/clusters/集群名字/requests
