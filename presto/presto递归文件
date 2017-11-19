@@ -1,0 +1,4 @@
+#在presto配置hive的地方添加参数
+'hive.recursive-directories=true'
+
+#重启presto
